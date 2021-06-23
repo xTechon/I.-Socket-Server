@@ -25,7 +25,7 @@ public class Driver {
 		
 		
 		int backlog = 50;
-		InetAddress loopback = InetAddress.getByName("127.0.0.1");		//For testing purposes
+		InetAddress loopback = InetAddress.getByName("127.0.0.1");				//For testing purposes
 		Scanner input = new Scanner(System.in);
 		System.out.println("Enter port number:");
 		int portNum = input.nextInt();
@@ -33,36 +33,35 @@ public class Driver {
 		System.out.println("Starting Server");
 		try (ServerSocket house = new ServerSocket(portNum, backlog, loopback)){ //binds the server to a specified port
 			
-			//initialTime = System.currentTimeMillis(); //start counting upTime
 			System.out.println("Listening for Clients on port " + portNum);
 			
 			while(true) {
-				Socket mailBox = house.accept();				//starts listening for incomming client requests
+				Socket mailBox = house.accept();								//starts listening for incomming client requests
 				
 				System.out.println("New Client connected");
 				
-				InputStream letter = mailBox.getInputStream();	//Recieve byte array from client
-				InputStreamReader readingGlasses = new InputStreamReader(letter); //turn byte array into characters
-				//BufferedReader l = new BufferedReader(readingGlasses);
-				int ID = readingGlasses.read();	//Read from the byte array
+				InputStream letter = mailBox.getInputStream();					//Recieve byte array from client
+				InputStreamReader bifocals = new InputStreamReader(letter); 	//turn byte array into characters
+				BufferedReader readingGlasses = new BufferedReader(bifocals); 	//make characters easier to process
+				int ID = Integer.parseInt(readingGlasses.readLine());			//Read from the byte array
 				
-				OutputStream output = mailBox.getOutputStream();	//get the return address
+				OutputStream output = mailBox.getOutputStream();				//get the return address
 				PrintWriter returnToSender = new PrintWriter(output, true);
-				System.out.println("Input from Client: " + ID);
+				
+				System.out.printf("\nInput from Client: %d", ID);
 				while (ID != -1) {
 									
 					proccessCommand(returnToSender, ID);	//Handle client request					
 				}
-				
 				mailBox.close();//close client connection
+				
 			}//End while loop
 		} catch (IOException ex) {
 			System.out.println("Server Exception" + ex.getMessage());
 			ex.printStackTrace();
-		}
+		}//End Catch
 		
-		
-	}
+	}//End main
 	
 	static public void proccessCommand(PrintWriter outBox, int ID) throws IOException {
 		switch(ID) {
@@ -70,28 +69,37 @@ public class Driver {
 			return;
 		case 0:
 			//Date and Time
+			System.out.printf(", Date and Time");
 			outBox.println(new Date().toString()); //Send Date to client
 			break;
 		case 1:
 			//Uptime
+			System.out.printf(", UpTime");
 			RuntimeMXBean RTB = ManagementFactory.getRuntimeMXBean();
 			long upTime = TimeUnit.MILLISECONDS.toSeconds(RTB.getUptime()); 
 			outBox.println("Server Up Time: " + upTime + " S");
 			break;
 		case 2:
 			//Memory_usage
+			System.out.printf(", Memory Usage");
 			Runtime gas = Runtime.getRuntime();
 			long memUse = gas.totalMemory() - gas.freeMemory();
 			outBox.println("Server Memory Usage: " + memUse);
 			break;
 		case 3:
-			//Netstat
+			//Netstat "netstat -all"
+			System.out.printf(", NetStat");
+			Process N = Runtime.getRuntime().exec("netstat -all");
 			break;
 		case 4:
-			//Current_Users
+			//Current_Users "who -H"
+			System.out.printf("Current Users");
+			Process U = Runtime.getRuntime().exec("who -H");
 			break;
 		case 5:
-			//Running Processes
+			//Running Processes "ps -ef"
+			System.out.printf(", Running Processes");
+			Process P = Runtime.getRuntime().exec("ps -ef");
 			break;
 		}
 	}
