@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import java.lang.management.*;
 
 
 /*
@@ -17,7 +19,7 @@ import java.util.Scanner;
  */
 public class Driver {
 
-	static long initialTime;
+	//static long initialTime;
 	
 	public static void main(String[] args) throws IOException{
 		
@@ -31,7 +33,7 @@ public class Driver {
 		System.out.println("Starting Server");
 		try (ServerSocket house = new ServerSocket(portNum, backlog, loopback)){ //binds the server to a specified port
 			
-			initialTime = System.currentTimeMillis(); //start counting upTime
+			//initialTime = System.currentTimeMillis(); //start counting upTime
 			System.out.println("Listening for Clients on port " + portNum);
 			
 			while(true) {
@@ -41,6 +43,7 @@ public class Driver {
 				
 				InputStream letter = mailBox.getInputStream();	//Recieve byte array from client
 				InputStreamReader readingGlasses = new InputStreamReader(letter); //turn byte array into characters
+				//BufferedReader l = new BufferedReader(readingGlasses);
 				int ID = readingGlasses.read();	//Read from the byte array
 				
 				OutputStream output = mailBox.getOutputStream();	//get the return address
@@ -71,11 +74,15 @@ public class Driver {
 			break;
 		case 1:
 			//Uptime
-			long elapsedTime = System.currentTimeMillis() - initialTime;
-			outBox.println("Server Up Time: " + elapsedTime + "ms");
+			RuntimeMXBean RTB = ManagementFactory.getRuntimeMXBean();
+			long upTime = TimeUnit.MILLISECONDS.toSeconds(RTB.getUptime()); 
+			outBox.println("Server Up Time: " + upTime + " S");
 			break;
 		case 2:
 			//Memory_usage
+			Runtime gas = Runtime.getRuntime();
+			long memUse = gas.totalMemory() - gas.freeMemory();
+			outBox.println("Server Memory Usage: " + memUse);
 			break;
 		case 3:
 			//Netstat
