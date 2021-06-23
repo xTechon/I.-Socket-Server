@@ -1,0 +1,18 @@
+The iterative (single-threaded) server must support the following client requests:
+
+    Date and Time - the date and time on the server
+    Uptime - how long the server has been running since last boot-up
+    Memory Use - the current memory usage on the server
+    Netstat - lists network connections on the server
+    Current Users - list of users currently connected to the server
+    Running Processes - list of programs currently running on the server
+
+When the server program is launched, the server should
+
+    Listen for client requests on the specified network address and port
+    When a client request is received, the server should
+        Determine which operation is being requested
+        Perform the requested operation and collect the resulting output
+        Reply to the client request with the output from the operation performed
+    Perform any necessary clean up activities
+    Go back to listening for client requests
