@@ -10,9 +10,9 @@ import java.lang.management.*;
  * - Listen for client requests on the specified network address and port
  *  Commands:
 		QUIT(-1, null, "Quit"),
-		DATE_AND_TIME(0, "free", "Date and Time"), 
-		UPTIME(1, "uptime", "Uptime"), 
-		MEMORY_USAGE(2, "free", "Memory Usage"), 
+		DATE_AND_TIME(0, "free", "Date and Time"),  [DONE]
+		UPTIME(1, "uptime", "Uptime"), 				[DONE]
+		MEMORY_USAGE(2, "free", "Memory Usage"), 	[DONE]
 		NETSTAT(3, "netstat", "Netstat"), 
 		CURRENT_USERS(4, "w", "Current Users"), 
 		RUNNING_PROCESSES(5, "ps", "Running Processes");
@@ -51,7 +51,7 @@ public class Driver {
 				System.out.printf("\nInput from Client: %d", ID);
 				while (ID != -1) {
 									
-					proccessCommand(returnToSender, ID);	//Handle client request					
+					processCommand(returnToSender, ID);	//Handle client request					
 				}
 				mailBox.close();//close client connection
 				
@@ -63,7 +63,7 @@ public class Driver {
 		
 	}//End main
 	
-	static public void proccessCommand(PrintWriter outBox, int ID) throws IOException {
+	static public void processCommand(PrintWriter outBox, int ID) throws IOException {
 		switch(ID) {
 		case -1:
 			return;
@@ -90,17 +90,36 @@ public class Driver {
 			//Netstat "netstat -all"
 			System.out.printf(", NetStat");
 			Process N = Runtime.getRuntime().exec("netstat -all");
+			BufferedReader NOut = new BufferedReader(new InputStreamReader(N.getInputStream()));
+			printLinuxCommand(outBox, NOut);
 			break;
 		case 4:
 			//Current_Users "who -H"
 			System.out.printf("Current Users");
 			Process U = Runtime.getRuntime().exec("who -H");
+			BufferedReader UOut = new BufferedReader(new InputStreamReader(U.getInputStream()));
+			printLinuxCommand(outBox, UOut);
 			break;
 		case 5:
 			//Running Processes "ps -ef"
 			System.out.printf(", Running Processes");
 			Process P = Runtime.getRuntime().exec("ps -ef");
+			BufferedReader POut = new BufferedReader(new InputStreamReader(P.getInputStream()));
+			printLinuxCommand(outBox, POut);
 			break;
+		}
+	}//End proccessCommand
+	
+	static public void printLinuxCommand(PrintWriter mailBoy, BufferedReader typewriter) {
+		String list;
+		try {
+			while((list = typewriter.readLine()) != null) {
+				mailBoy.println(list); 		//send linux command output to client
+				//System.out.println(list);	//send the results in the console
+			}
+		} catch (IOException e) {
+			System.out.println("Server Exception" + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
