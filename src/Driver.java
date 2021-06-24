@@ -5,33 +5,20 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.lang.management.*;
 
-
-/*
- * - Listen for client requests on the specified network address and port
- *  Commands:
-		QUIT(-1, null, "Quit"),
-		DATE_AND_TIME(0, "free", "Date and Time"),  [DONE]
-		UPTIME(1, "uptime", "Uptime"), 				[DONE]
-		MEMORY_USAGE(2, "free", "Memory Usage"), 	[DONE]
-		NETSTAT(3, "netstat", "Netstat"), 
-		CURRENT_USERS(4, "w", "Current Users"), 
-		RUNNING_PROCESSES(5, "ps", "Running Processes");
- */
 public class Driver {
-
-	//static long initialTime;
 	
 	public static void main(String[] args) throws IOException{
 		if (args.length < 1) {System.err.println("\n Usage: java Driver <listening port>\n"); return;} //process args string
 		
-		int backlog = 50;
-		InetAddress loopback = InetAddress.getByName("127.0.0.1");				//For testing purposes
+		int backlog = 25;														//Set the max number of queued connections
+		InetAddress loopback = InetAddress.getByName("127.0.0.1");				//For use loopback address for testing purposes
 		//Scanner input = new Scanner(System.in);
 		//System.out.println("Enter port number:");
 		int portNum = Integer.parseInt(args[0]);
 		
 		System.out.println("Starting Server");
-		try (ServerSocket house = new ServerSocket(portNum, backlog, loopback)){ //binds the server to a specified port
+		//try (ServerSocket house = new ServerSocket(portNum, backlog, loopback)){ 	//binds the server to loopback port for testing locally
+		try (ServerSocket house = new ServerSocket(portNum, backlog)){ 				//binds the server to a specified port
 			
 			System.out.println("Listening for Clients on port " + portNum);
 			
@@ -43,26 +30,25 @@ public class Driver {
 				InputStream letter = mailBox.getInputStream();					//Recieve byte array from client
 				InputStreamReader bifocals = new InputStreamReader(letter); 	//turn byte array into characters
 				BufferedReader readingGlasses = new BufferedReader(bifocals); 	//make characters easier to process
-				int ID = Integer.parseInt(readingGlasses.readLine());			//Read from the byte array
+				int ID = Integer.parseInt(readingGlasses.readLine());			//Use the Reading Glasses to read the letter
 				
 				OutputStream output = mailBox.getOutputStream();				//get the return address
-				PrintWriter returnToSender = new PrintWriter(output, true);
+				PrintWriter returnToSender = new PrintWriter(output, true);		//have the mail office on spd dial
 				
 				System.out.printf("\nInput from Client: %d", ID);
 				while (ID != -1) {
 									
 					processCommand(returnToSender, ID);	//Handle client request					
 				}
-				mailBox.close();//close client connection
+				mailBox.close();  						//close client connection
 				System.out.println("Request Completed");
 				System.out.println("Client Disconnected");
-				
 			}//End while loop
+			
 		} catch (IOException ex) {
 			System.out.println("Server Exception" + ex.getMessage());
 			ex.printStackTrace();
 		}//End Catch
-		
 	}//End main
 	
 	/**
