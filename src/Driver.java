@@ -22,13 +22,13 @@ public class Driver {
 	//static long initialTime;
 	
 	public static void main(String[] args) throws IOException{
-		
+		if (args.length < 1) {System.err.println("\n Usage: java Driver <listening port>\n"); return;} //process args string
 		
 		int backlog = 50;
 		InetAddress loopback = InetAddress.getByName("127.0.0.1");				//For testing purposes
-		Scanner input = new Scanner(System.in);
-		System.out.println("Enter port number:");
-		int portNum = input.nextInt();
+		//Scanner input = new Scanner(System.in);
+		//System.out.println("Enter port number:");
+		int portNum = Integer.parseInt(args[0]);
 		
 		System.out.println("Starting Server");
 		try (ServerSocket house = new ServerSocket(portNum, backlog, loopback)){ //binds the server to a specified port
@@ -54,6 +54,8 @@ public class Driver {
 					processCommand(returnToSender, ID);	//Handle client request					
 				}
 				mailBox.close();//close client connection
+				System.out.println("Request Completed");
+				System.out.println("Client Disconnected");
 				
 			}//End while loop
 		} catch (IOException ex) {
@@ -63,6 +65,12 @@ public class Driver {
 		
 	}//End main
 	
+	/**
+	 * Uses a switch/case to process command IDs
+	 * @param outBox
+	 * @param ID
+	 * @throws IOException
+	 */
 	static public void processCommand(PrintWriter outBox, int ID) throws IOException {
 		switch(ID) {
 		case -1:
@@ -77,7 +85,7 @@ public class Driver {
 			System.out.printf(", UpTime");
 			RuntimeMXBean RTB = ManagementFactory.getRuntimeMXBean();
 			long upTime = TimeUnit.MILLISECONDS.toSeconds(RTB.getUptime()); 
-			outBox.println("Server Up Time: " + upTime + " S");
+			outBox.println("Server Up Time: " + upTime + " S");		//send Uptime to client
 			break;
 		case 2:
 			//Memory_usage
@@ -110,6 +118,11 @@ public class Driver {
 		}
 	}//End proccessCommand
 	
+	/**
+	 * Sends output from a BufferedReader to the Client 
+	 * @param mailBoy PrintWriter that sends data to client
+	 * @param typewriter Output from linux command
+	 */
 	static public void printLinuxCommand(PrintWriter mailBoy, BufferedReader typewriter) {
 		String list;
 		try {
@@ -121,6 +134,6 @@ public class Driver {
 			System.out.println("Server Exception" + e.getMessage());
 			e.printStackTrace();
 		}
-	}
+	}//End printLinuxCommand
 
 }
