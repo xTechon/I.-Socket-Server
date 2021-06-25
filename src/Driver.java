@@ -43,10 +43,10 @@ public class Driver {
 				System.out.println("PrintWriter Established");
 				
 				System.out.printf("\nInput from Client: %d", ID);
-				while (ID != -1) {
+//				while (ID != -1) {
 									
 					processCommand(returnToSender, ID);	//Handle client request					
-				}
+//				}
 				letter.close();
 				mailBox.close();  						//close client connection
 				System.out.println("Request Completed");
