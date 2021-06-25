@@ -11,7 +11,7 @@ public class Driver {
 		if (args.length < 1) {System.err.println("\n Usage: java Driver <listening port>\n"); return;} //process args string
 		
 		int backlog = 25;														//Set the max number of queued connections
-		InetAddress loopback = InetAddress.getByName("127.0.0.1");				//For use loopback address for testing purposes
+		//InetAddress loopback = InetAddress.getByName("127.0.0.1");				//For use loopback address for testing purposes
 		//Scanner input = new Scanner(System.in);
 		//System.out.println("Enter port number:");
 		int portNum = Integer.parseInt(args[0]);
@@ -28,18 +28,26 @@ public class Driver {
 				System.out.println("New Client connected");
 				
 				InputStream letter = mailBox.getInputStream();					//Recieve byte array from client
+				System.out.println("InputStream Successful");
 				InputStreamReader bifocals = new InputStreamReader(letter); 	//turn byte array into characters
+				System.out.println("InputStreamReader Successful");
 				BufferedReader readingGlasses = new BufferedReader(bifocals); 	//make characters easier to process
+				System.out.println("BufferedReader Successful");
 				int ID = Integer.parseInt(readingGlasses.readLine());			//Use the Reading Glasses to read the letter
+				System.out.println("Input Read from Client: " + ID);
 				
 				OutputStream output = mailBox.getOutputStream();				//get the return address
+				System.out.println("Recieved OutputStream");
+				
 				PrintWriter returnToSender = new PrintWriter(output, true);		//have the mail office on spd dial
+				System.out.println("PrintWriter Established");
 				
 				System.out.printf("\nInput from Client: %d", ID);
 				while (ID != -1) {
 									
 					processCommand(returnToSender, ID);	//Handle client request					
 				}
+				letter.close();
 				mailBox.close();  						//close client connection
 				System.out.println("Request Completed");
 				System.out.println("Client Disconnected");
