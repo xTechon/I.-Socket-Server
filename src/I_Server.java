@@ -16,10 +16,10 @@ public class I_Server {
 		//System.out.println("Enter port number:");
 		int portNum = Integer.parseInt(args[0]);
 		
-		System.out.println("Starting Server");
+		
 		//try (ServerSocket house = new ServerSocket(portNum, backlog, loopback)){ 	//binds the server to loopback port for testing locally
 		try (ServerSocket house = new ServerSocket(portNum, backlog)){ 				//binds the server to a specified port
-			
+			System.out.println("Starting Server on " + house.getInetAddress());
 			System.out.println("Listening for Clients on port " + portNum);
 			
 			while(true) {
