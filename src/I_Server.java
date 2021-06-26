@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.lang.management.*;
 
-public class Server {
+public class I_Server {
 	
 	public static void main(String[] args) throws IOException{
 		if (args.length < 1) {System.err.println("\n Usage: java Driver <listening port>\n"); return;} //process args string
