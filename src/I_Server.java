@@ -15,48 +15,53 @@ public class I_Server {
 		//Scanner input = new Scanner(System.in);
 		//System.out.println("Enter port number:");
 		int portNum = Integer.parseInt(args[0]);
-		
+		int ID = -30;
 		
 		//try (ServerSocket house = new ServerSocket(portNum, backlog, loopback)){ 	//binds the server to loopback port for testing locally
 		try (ServerSocket house = new ServerSocket(portNum, backlog)){ 				//binds the server to a specified port
-			System.out.println("Starting Server on " + house.getInetAddress());
+			System.out.println("Starting Server on 139.62.210.153");				//easier to find IP
 			System.out.println("Listening for Clients on port " + portNum);
 			
-			while(true) {
+			while(ID != -2) {
 				Socket mailBox = house.accept();								//starts listening for incoming client requests
 				
 				System.out.println("New Client connected");
 				
 				InputStream letter = mailBox.getInputStream();					//Recieve byte array from client
-				System.out.println("InputStream Successful");
+				//System.out.println("InputStream Successful");
+				
 				InputStreamReader bifocals = new InputStreamReader(letter); 	//turn byte array into characters
-				System.out.println("InputStreamReader Successful");
+				//System.out.println("InputStreamReader Successful");
+				
 				BufferedReader readingGlasses = new BufferedReader(bifocals); 	//make characters easier to process
-				System.out.println("BufferedReader Successful");
-				int ID = Integer.parseInt(readingGlasses.readLine());			//Use the Reading Glasses to read the letter
+				//System.out.println("BufferedReader Successful");
+				
+				ID = Integer.parseInt(readingGlasses.readLine());				//Use the Reading Glasses to read the letter
 				System.out.println("Input Read from Client: " + ID);
 				
 				OutputStream output = mailBox.getOutputStream();				//get the return address
-				System.out.println("Recieved OutputStream");
+				//System.out.println("Recieved OutputStream");
 				
 				PrintWriter returnToSender = new PrintWriter(output, true);		//have the mail office on spd dial
-				System.out.println("PrintWriter Established");
+				//System.out.println("PrintWriter Established");
 				
 				System.out.printf("\nInput from Client: %d", ID);
-//				while (ID != -1) {
+
 									
-					processCommand(returnToSender, ID);	//Handle client request					
-//				}
-				//letter.close();
-				mailBox.close();  						//close client connection
+				processCommand(returnToSender, ID);	//Handle client request					
+
+				mailBox.close();  					//close client connection
+				
 				System.out.println("Request Completed");
 				System.out.println("Client Disconnected");
 			}//End while loop
-			//System.out.println("Exited While Loop");
+			System.out.println("Shuting Down...");
+			house.close();
 		} catch (IOException ex) {
 			System.out.println("Server Exception" + ex.getMessage());
 			ex.printStackTrace();
 		}//End Catch
+		
 	}//End main
 	
 	/**
@@ -72,23 +77,23 @@ public class I_Server {
 		case 0:
 			//Date and Time
 			System.out.printf(", Date and Time");
-			System.out.println(new Date().toString());			//Make sure data is correct
-			outBox.println("Date: " + new Date().toString()); 	//Send Date to client
+			//System.out.println(new Date().toString());			//Make sure data is correct
+			outBox.println("Date: " + new Date().toString()); 		//Send Date to client
 			break;
 		case 1:
 			//Uptime
 			System.out.printf(", UpTime");
 			RuntimeMXBean RTB = ManagementFactory.getRuntimeMXBean();
 			long upTime = TimeUnit.MILLISECONDS.toSeconds(RTB.getUptime()); 
-			System.out.println("Server Up Time: " + upTime + "S");	//Data verification
-			outBox.println("Server Up Time: " + upTime + " S");		//send Uptime to client
+			//System.out.println("Server Up Time: " + upTime + "S");	//Data verification
+			outBox.println("Server Up Time: " + upTime + " S");			//send Uptime to client
 			break;
 		case 2:
 			//Memory_usage
 			System.out.printf(", Memory Usage");
 			Runtime gas = Runtime.getRuntime();
 			long memUse = gas.totalMemory() - gas.freeMemory();
-			System.out.println("Server Memory Usage: " + memUse); //Data verification
+			//System.out.println("Server Memory Usage: " + memUse); //Data verification
 			outBox.println("Server Memory Usage: " + memUse);
 			break;
 		case 3:
@@ -125,7 +130,7 @@ public class I_Server {
 		try {
 			while((list = typewriter.readLine()) != null) {
 				mailBoy.println(list); 		//send linux command output to client
-				System.out.println(list);	//send the results in the console
+				//System.out.println(list);	//send the results in the console
 			}
 		} catch (IOException e) {
 			System.out.println("Server Exception" + e.getMessage());
