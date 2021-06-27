@@ -23,7 +23,7 @@ public class I_Server {
 			System.out.println("Listening for Clients on port " + portNum);
 			
 			while(true) {
-				Socket mailBox = house.accept();								//starts listening for incomming client requests
+				Socket mailBox = house.accept();								//starts listening for incoming client requests
 				
 				System.out.println("New Client connected");
 				
@@ -47,12 +47,12 @@ public class I_Server {
 									
 					processCommand(returnToSender, ID);	//Handle client request					
 //				}
-				letter.close();
+				//letter.close();
 				mailBox.close();  						//close client connection
 				System.out.println("Request Completed");
 				System.out.println("Client Disconnected");
 			}//End while loop
-			
+			//System.out.println("Exited While Loop");
 		} catch (IOException ex) {
 			System.out.println("Server Exception" + ex.getMessage());
 			ex.printStackTrace();
@@ -72,13 +72,15 @@ public class I_Server {
 		case 0:
 			//Date and Time
 			System.out.printf(", Date and Time");
-			outBox.println(new Date().toString()); //Send Date to client
+			System.out.println(new Date().toString());			//Make sure data is correct
+			outBox.println("Date: " + new Date().toString()); 	//Send Date to client
 			break;
 		case 1:
 			//Uptime
 			System.out.printf(", UpTime");
 			RuntimeMXBean RTB = ManagementFactory.getRuntimeMXBean();
 			long upTime = TimeUnit.MILLISECONDS.toSeconds(RTB.getUptime()); 
+			System.out.println("Server Up Time: " + upTime + "S");	//Data verification
 			outBox.println("Server Up Time: " + upTime + " S");		//send Uptime to client
 			break;
 		case 2:
@@ -86,6 +88,7 @@ public class I_Server {
 			System.out.printf(", Memory Usage");
 			Runtime gas = Runtime.getRuntime();
 			long memUse = gas.totalMemory() - gas.freeMemory();
+			System.out.println("Server Memory Usage: " + memUse); //Data verification
 			outBox.println("Server Memory Usage: " + memUse);
 			break;
 		case 3:
@@ -122,7 +125,7 @@ public class I_Server {
 		try {
 			while((list = typewriter.readLine()) != null) {
 				mailBoy.println(list); 		//send linux command output to client
-				//System.out.println(list);	//send the results in the console
+				System.out.println(list);	//send the results in the console
 			}
 		} catch (IOException e) {
 			System.out.println("Server Exception" + e.getMessage());
