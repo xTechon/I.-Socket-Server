@@ -16,10 +16,11 @@ import java.lang.management.*;
 public class ServerThread extends Thread {
 	
 	private Socket POBox = new Socket();
-	int ID = -30;
+	private int ID;
 	
 	ServerThread(Socket mailbox){
-		POBox = mailbox;
+		this.POBox = mailbox;
+		this.ID = -30;
 	}
 	
 	@Override

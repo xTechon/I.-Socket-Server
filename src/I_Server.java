@@ -10,7 +10,7 @@ public class I_Server {
 	public static void main(String[] args) throws IOException{
 		if (args.length < 1) {System.err.println("\n Usage: java I_Server <listening port>\n"); return;} //process args string
 		
-		int backlog = 25;														//Set the max number of queued connections
+		int backlog = 100;														//Set the max number of queued connections
 		//InetAddress loopback = InetAddress.getByName("127.0.0.1");				//For use loopback address for testing purposes
 		//Scanner input = new Scanner(System.in);
 		//System.out.println("Enter port number:");
@@ -23,12 +23,13 @@ public class I_Server {
 			System.out.println("Listening for Clients on port " + portNum);
 			
 			while(true) {
+				System.out.println("looping...");
 				Socket mailBox = house.accept();								//starts listening for incoming client requests
 				
 				System.out.println("New Client connected");
 				
 				new ServerThread(mailBox).start();
-				
+				mailBox.close();
 				
 			}//End while loop
 		} catch (IOException ex) {
