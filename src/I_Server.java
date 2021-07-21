@@ -23,13 +23,13 @@ public class I_Server {
 			System.out.println("Listening for Clients on port " + portNum);
 			
 			while(true) {
-				System.out.println("looping...");
+				//System.out.println("looping...");
 				Socket mailBox = house.accept();								//starts listening for incoming client requests
 				
 				System.out.println("New Client connected");
 				
 				new ServerThread(mailBox).start();
-				mailBox.close();
+				//mailBox.close();
 				
 			}//End while loop
 		} catch (IOException ex) {
